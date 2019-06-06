@@ -55,7 +55,7 @@ def get_record():
     # try contains a variable, which calls the find() method to find records to match input
     # except displays an error if there was an issue accessing the database
     try:
-        doc = coll.find({'first': first.lower(), 'last': last.lower()})
+        doc = coll.find_one({'first': first.lower(), 'last': last.lower()})
     except:
         print("Error accessing database")
     
@@ -99,6 +99,22 @@ def add_record():
     except:
         print("Error accessing the database")
 
+def find_record():
+    '''
+    10. Function to run the find operation and finds and returns our records
+    '''
+    # Define variable that stores the results of the get_record function
+    doc = get_record()
+    
+    # If we have results, we use a for loop to iterate through the keys and values of the returned dictionary
+    if doc:
+        print("")
+        # Call the items() method to step through each item (key/value pair)
+        for k,v in doc.items():
+            # We don't want the id to be displayed, so we omit it by using the != operator
+            if k != "_id":
+                print(k.capitalize() + ": " + v.capitalize())
+
 def main_loop():
     '''
     3. Function to define the main loop, so the options will loop unless the user exits
@@ -110,7 +126,8 @@ def main_loop():
             # print("You have selected option 1") - 7. Have it initially but change once function created
             add_record()
         elif option == "2":
-            print("You have selected option 2")
+            # print("You have selected option 2") - 11. Have it initially but change once function created
+            find_record()
         elif option == "3":
             print("You have selected option 3")
         elif option == "4":
