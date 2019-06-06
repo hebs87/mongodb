@@ -90,7 +90,7 @@ def add_record():
     new_doc = {'first': first.lower(), 'last': last.lower(), 'dob': dob.lower(), 'gender': gender.lower(), 'hair_colour': hair_colour.lower(),
                 'occupation': occupation.lower(), 'nationality': nationality.lower(),}
     
-    # Create a try expcept block
+    # Create a try except block
     # try block inserts the dictionary variable to the database and confirms to user
     try:
         coll.insert(new_doc)
@@ -115,6 +115,65 @@ def find_record():
             if k != "_id":
                 print(k.capitalize() + ": " + v.capitalize())
 
+def edit_record():
+    '''
+    12. Function to edit/update a record in our database
+    '''
+    # Define variable that stores the results of the get_record function
+    doc = get_record()
+    
+    # If we have results, we will create an empty dictionary and build it as we iterate through keys and values
+    if doc:
+        update_doc = {}
+        print("")
+        # Call the items() method to step through each item (key/value pair)
+        for k,v in doc.items():
+            # We don't want the id to be displayed, so we omit it by using the != operator
+            if k != "_id":
+                # As we iterate through, we will update the update_doc dictionary
+                # For each key, we pass in the key and display it to the user, with the current value in []
+                update_doc[k] = input(k.capitalize() + " [" + v + "] > ")
+                
+                # If we've left the value blank, we want the current value to remain, not replaced with empty string
+                if update_doc[k] == "":
+                    update_doc[k] = v
+                
+        # try except block
+        # If the user enters a value, the try block will update them
+        try:
+            # We want to udpdate the current block
+            coll.update_one(doc, {'$set': update_doc})
+            print("")
+            print("Document updated")
+        except:
+            print("Error accessing the database")
+
+def delete_record():
+    '''
+    Function to enable us to delete a record
+    '''
+    doc = get_record()
+    
+    if doc:
+        print("")
+        for k,v in doc.items():
+            if k != '_id':
+                print(k.capitalize() + ": " + v.capitalize())
+        
+        print("")
+        # Create new variable to store the result of a user input
+        confirmation = input("Is this the document you want to delete\nY or N > ")
+        print("")
+        # If the user says y, then we delete the record (try except block)
+        if confirmation.lower() == 'y':
+            try:
+                coll.remove(doc)
+                print("Document deleted!")
+            except:
+                print("Error accessing the database")
+        else:
+            print("Document not deleted")
+
 def main_loop():
     '''
     3. Function to define the main loop, so the options will loop unless the user exits
@@ -129,9 +188,11 @@ def main_loop():
             # print("You have selected option 2") - 11. Have it initially but change once function created
             find_record()
         elif option == "3":
-            print("You have selected option 3")
+            # print("You have selected option 3") - 13. Have it initially but change once function created
+            edit_record()
         elif option == "4":
-            print("You have selected option 4")
+            # print("You have selected option 4") - 14. Have it initially but change once function created
+            delete_record()
         elif option == "5":
             # If option 5 is selected, the connection closes and breaks out of the loop
             conn.close()
